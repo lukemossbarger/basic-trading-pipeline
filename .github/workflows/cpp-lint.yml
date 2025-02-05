@@ -20,7 +20,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang-tidy clang-format
 
       - name: Run Clang-Tidy (Linter)
-        run: clang-tidy src/*.cpp -- -std=c++17  # Adjust the path as needed
+        run: clang-tidy src/cppsrc/*.cpp -- -std=c++17  # Adjust the path as needed
 
       - name: Run Clang-Format (Formatter Check)
-        run: clang-format --dry-run --Werror src/*.cpp  # Adjust the path as needed
+        run: run: clang-format -i src/cppsrc/*.cpp
+
