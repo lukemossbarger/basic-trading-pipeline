@@ -23,5 +23,5 @@ jobs:
         run: clang-tidy src/cppsrc/*.cpp -- -std=c++17  # Adjust the path as needed
 
       - name: Run Clang-Format (Formatter Check)
-        run: run: clang-format -i src/cppsrc/*.cpp
+        run: clang-format -i src/cppsrc/*.cpp
 
