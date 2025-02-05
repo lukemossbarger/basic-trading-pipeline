@@ -1,0 +1,26 @@
+name: C++ Linting and Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Clang-Tidy and Clang-Format
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy clang-format
+
+      - name: Run Clang-Tidy (Linter)
+        run: clang-tidy src/*.cpp -- -std=c++17  # Adjust the path as needed
+
+      - name: Run Clang-Format (Formatter Check)
+        run: clang-format --dry-run --Werror src/*.cpp  # Adjust the path as needed

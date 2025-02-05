@@ -1,0 +1,38 @@
+name: Python Linting and Type Checking
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  lint:
+    name: Run Ruff and Mypy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy
+          pip install -r requirements.txt  # Ensure your dependencies are installed
+
+      - name: Run Ruff (Linter & Formatter)
+        run: |
+          ruff check .  # Linter
+          ruff format --check .  # Formatter (ensures formatting is correct)
+
+      - name: Run Mypy (Type Checking)
+        run: |
+          mypy .
