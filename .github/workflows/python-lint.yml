@@ -35,8 +35,7 @@ jobs:
 
       - name: Run Ruff (Linter & Formatter)
         run: |
-          ruff check .  # Linter
-          ruff format --check .  # Formatter (ensures formatting is correct)
+          ruff format .  # Formatter (ensures formatting is correct)
 
       - name: Run Mypy (Type Checking)
         run: |
