@@ -24,9 +24,18 @@ jobs:
           pip install --upgrade pipx
           pipx install cmake ninja conan poetry clang-tidy clang-format
 
-      - name: Profile detect
+      - name: Check Conan Profile
         run: |
-          conan profile detect
+          conan profile detect || echo "Conan profile detection failed!"
+  
+      - name: Build Project
+        run: make build
+
+      - name: Debug Check
+        run: |
+          pwd
+          ls -la
+          ls -R src/cppsrc || echo "src/cppsrc not found!"
 
       - name: Run linter and formatter checks
         run: |
