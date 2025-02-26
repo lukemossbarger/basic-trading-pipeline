@@ -13,15 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Python Set Up
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install tools
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade pipx
+          pipx install cmake ninja conan poetry clang-tidy clang-format
 
-      - name: Install Clang-Tidy and Clang-Format
-        run: sudo apt-get update && sudo apt-get install -y clang-tidy clang-format
+      - name: Profile detect
+        run: |
+          conan profile detect
 
-      - name: Run Clang-Tidy (Linter)
-        run: clang-tidy src/cppsrc/*.cpp -- -std=c++17  # Adjust the path as needed
-
-      - name: Run Clang-Format (Formatter Check)
-        run: clang-format -i src/cppsrc/*.cpp
+      - name: Run linter and formatter checks
+        run: |
+          make lint_format_check_cpp
 

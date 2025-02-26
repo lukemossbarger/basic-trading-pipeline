@@ -13,15 +13,24 @@ install:
 	conan install . --build=missing
 	poetry install
 
-test: build
+test_cpp: build
 	@cd build && ./intern_tests
-	@poetry run pytest $(PY_SRC)/test
+
+test_py: build
+	@poetry run pytest $(PY_SRC)/test/unit
+
+test_int: build
+	@poetry run pytest $(PY_SRC)/test/integration
 
 clean:
 	@rm -rf build
 	@rm -f $(PY_SRC)/*.so
 
-lint:
+lint_cpp: build
+	find $(CPP_SRC) -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
+	find $(CPP_SRC) -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+lint_py:
 	poetry run mypy $(PY_SRC)
 	poetry run ruff check $(PY_SRC)
 	poetry run ruff format --check $(PY_SRC)
