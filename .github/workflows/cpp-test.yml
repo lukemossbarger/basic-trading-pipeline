@@ -24,7 +24,7 @@ jobs:
 
       - name: Profile detect
         run: |
-          conan profile detectd
+          conan profile detect
 
       - name: Run C++ Unit Tests
         run: make test_cpp
