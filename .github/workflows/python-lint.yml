@@ -26,6 +26,10 @@ jobs:
           pip install --upgrade pip
           pip install --upgrade pipx
           pipx install poetry conan mypy ruff
+
+      - name: Profile detect 
+        run: |
+          conan profile detect
       
       - name: Run
         run: |
