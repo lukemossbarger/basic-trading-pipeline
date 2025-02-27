@@ -26,7 +26,6 @@ jobs:
           pip install --upgrade pip
           pip install --upgrade pipx
           pipx install cmake ninja conan poetry clang-tidy clang-format
-          poetry add requests
 
       - name: Profile detect 
         run: |
