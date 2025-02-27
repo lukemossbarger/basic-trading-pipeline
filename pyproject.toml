@@ -8,6 +8,9 @@ packages = [
   {include = "pysrc", from = "src"}
 ]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+
 [project]
 name = "intern-project"
 version = "0.1.0"

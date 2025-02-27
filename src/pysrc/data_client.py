@@ -18,10 +18,9 @@ class DataClient:
 
         return response.json()  # Return parsed JSON data from the API
 
-    def _parse_message(self, message: str) -> dict:
-        parsed_message = json.loads(message)
+    def _parse_message(self, message: dict) -> dict:
         fields = ["type", "amount", "timestampms", "price"]
-        return {key: parsed_message[key] for key in fields if key in parsed_message}
+        return {key: message[key] for key in fields if key in message}
 
     def get_data(self) -> list:
         response = self._query_api()

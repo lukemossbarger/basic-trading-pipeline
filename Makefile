@@ -4,13 +4,15 @@ RELEASE_TYPE = Release
 PY_SRC = src/pysrc
 CPP_SRC = src/cppsrc
 
-build: install
+build: install_cpp install_py
 	cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=$(RELEASE_TYPE)/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) -G Ninja
 	cd build && cmake --build .
 	@cp -f build/*.so $(PY_SRC)
 
-install:
+install_cpp:
 	conan install . --build=missing
+
+install_py:
 	poetry install
 
 test_cpp: build
@@ -20,7 +22,7 @@ test_py: build
 	@poetry run pytest $(PY_SRC)/test/unit
 
 test_int: build
-	@poetry run pytest $(PY_SRC)/test/integration
+	@poetry run pytest $(PY_SRC)/test/int/
 
 clean:
 	@rm -rf build
