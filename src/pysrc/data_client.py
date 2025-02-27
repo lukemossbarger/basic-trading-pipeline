@@ -1,6 +1,6 @@
 import requests
 import json
-from typing import Any
+from typing import Any, Dict, cast
 
 
 class DataClient:
@@ -8,7 +8,7 @@ class DataClient:
         self.symbol = "btcusd"
         self.limit = 100
 
-    def _query_api(self) -> Any:
+    def _query_api(self) -> list[Dict[str, Any]]:
         url = f"https://api.gemini.com/v1/trades/{self.symbol}"
         params = {
             "symbol": self.symbol,
@@ -16,12 +16,12 @@ class DataClient:
         }
         response = requests.get(url, params=params)
 
-        return response.json()  # Return parsed JSON data from the API
+        return cast(list[Dict[str, Any]], response.json())
 
-    def _parse_message(self, message: dict) -> dict:
+    def _parse_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         fields = ["type", "amount", "timestampms", "price"]
         return {key: message[key] for key in fields if key in message}
 
-    def get_data(self) -> list:
+    def get_data(self) -> list[Dict[str, Any]]:
         response = self._query_api()
         return [self._parse_message(trade) for trade in response]

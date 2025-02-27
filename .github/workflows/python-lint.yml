@@ -26,8 +26,8 @@ jobs:
           pip install --upgrade pip
           pip install --upgrade pipx
           pipx install poetry conan ninja mypy ruff
-          poetry add requests
-          poetry add types-requests
+        # poetry add requests
+        # poetry add types-requests
           
 
       - name: Profile detect 
@@ -35,7 +35,7 @@ jobs:
           conan profile detect
 
       - name: Format code
-        run: poetry run ruff format src/
+        run: poetry run ruff format --check src/
       
       - name: Run
         run: |
