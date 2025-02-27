@@ -24,6 +24,8 @@ test_py: build
 test_int: build
 	@poetry run pytest $(PY_SRC)/test/int/
 
+test: test_int test_py test_cpp lint_cpp lint_py
+
 clean:
 	@rm -rf build
 	@rm -f $(PY_SRC)/*.so
