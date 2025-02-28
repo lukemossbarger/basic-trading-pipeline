@@ -1,5 +1,5 @@
 from sklearn.linear_model import Lasso
-from data_client import DataClient
+from pysrc.data_client import DataClient
 from collections import deque
 from typing import Any, Dict, Deque
 import time
@@ -14,19 +14,15 @@ class Model:
         self.tick = 0
 
     def compute_features(self, data: list[Dict[str, Any]]) -> list[float]:
-        nt = intern.NTradesFeature()
-        pb = intern.PercentBuyFeature()
-        ps = intern.PercentSellFeature()
-        ftv = intern.FiveTickVolumeFeature()
-
         cpp_trades = [
-            [trade["price"], trade["amount"], trade["type"] == "buy"] for trade in data
+            (float(trade["price"]), float(trade["amount"]), trade["type"] == "buy")
+            for trade in data
         ]
 
-        nt.compute_feature(cpp_trades)
-        pb.compute_feature(cpp_trades)
-        ps.compute_feature(cpp_trades)
-        ftv.compute_feature(cpp_trades)
+        nt = intern.NTradesFeature().compute_feature(cpp_trades)
+        pb = intern.PercentBuyFeature().compute_feature(cpp_trades)
+        ps = intern.PercentSellFeature().compute_feature(cpp_trades)
+        ftv = intern.FiveTickVolumeFeature().compute_feature(cpp_trades)
 
         return [nt, pb, ps, ftv]
 
@@ -34,11 +30,12 @@ class Model:
         X = [tick[1:] for tick in self.buffer]
         y = [tick[0] for tick in self.buffer]
         self.model.fit(X, y)
-        prediction = self.model.predict([X[-1]])
+        prediction = round(float(self.model.predict([X[-1]])), 3)
+        print("Prediction: " + str(prediction))
         if prediction > y[-1]:
-            print("BUY\n")
+            print("BUY")
         else:
-            print("SELL\n")
+            print("SELL")
 
     def on_tick(self) -> None:
         data = self.client.get_data()
@@ -47,11 +44,17 @@ class Model:
         bb = 0.0
         ba = float("inf")
         for trade in data:
-            if trade["type"] == "buy" and trade["price"]:
-                bb = max(bb, trade["price"])
-            elif trade["type"] == "sell" and trade["price"]:
-                ba = min(ba, trade["price"])
-        midprice = (bb + ba) / 2
+            if trade["type"] == "buy":
+                bb = max(bb, round(float(trade["price"]), 3))
+            elif trade["type"] == "sell":
+                ba = min(ba, float(trade["price"]))
+        if not bb and ba == float("inf"):
+            midprice = 0.0
+        elif not bb:
+            midprice = ba
+        elif ba == float("inf"):
+            midprice = bb
+        midprice = round(((bb + ba) / 2), 3)
 
         if len(self.buffer) == 10:
             features.insert(0, midprice)
@@ -62,6 +65,7 @@ class Model:
             print("Collecting data...")
             features.insert(0, midprice)
             self.buffer.append(features)
+        print("Midprice: " + str(midprice) + "\n")
 
     def run(self, tick_size: int) -> None:
         while True:

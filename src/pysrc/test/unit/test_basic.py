@@ -2,6 +2,7 @@ import pytest
 from typing import Any
 from unittest import mock
 from pysrc.data_client import DataClient
+from pysrc.model import Model
 
 
 @pytest.fixture
