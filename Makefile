@@ -43,3 +43,6 @@ format:
 	find $(CPP_SRC) -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
 	poetry run ruff format $(PY_SRC)
 	poetry run ruff check --fix $(PY_SRC)
+	clang-format -i src/cppsrc/*.hpp
+	clang-format -i src/cppsrc/*.cpp
+	clang-format -i src/cppsrc/test/*.cpp
