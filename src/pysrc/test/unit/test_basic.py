@@ -152,12 +152,18 @@ def test_buffer() -> None:
 
     for i in range(len(fake_trade_data) - 1):
         features = model.compute_features(fake_trade_data[i])
-        print(features)
         if i >= 10:
-            model.train(features, midprices[i])
-        else:
-            features.insert(0, midprices[i])
+            model.predict(features)
+            model.train()
+        elif i == 9:
+            model.train()
+        if i:
+            features.insert(0, (midprices[i] - model.last_midprice) / midprices[i])
             model.buffer.append(features)
+        else:
+            features.insert(0, 0.0)
+            model.buffer.append(features)
+        model.last_midprice = midprices[i]
 
     assert len(midprices) == len(fake_trade_data)
     assert isinstance(model.model.coef_, np.ndarray)

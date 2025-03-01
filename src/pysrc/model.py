@@ -12,6 +12,7 @@ class Model:
         self.client = DataClient()
         self.model = Lasso(alpha=1)
         self.tick = 0
+        self.last_midprice = 0.0
         self.features = [
             intern.NTradesFeature(),
             intern.PercentBuyFeature(),
@@ -26,18 +27,14 @@ class Model:
         ]
         return [feature.compute_feature(cpp_trades) for feature in self.features]
 
-    def train(self, features: list[float], midprice: float) -> None:
+    def train(self) -> None:
         X = [tick[1:] for tick in self.buffer]
         y = [tick[0] for tick in self.buffer]
         self.model.fit(X, y)
-        prediction = round(float(self.model.predict([features])), 3)
-        print("Prediction: " + str(prediction))
-        if prediction > midprice:
-            print("BUY")
-        else:
-            print("SELL")
-        features.insert(0, midprice)
-        self.buffer.append(features)
+
+    def predict(self, features: list[float]) -> float:
+        prediction = round(float(self.model.predict([features])[0]), 3)
+        return prediction
 
     def on_tick(self) -> None:
         data = self.client.get_data()
@@ -58,15 +55,21 @@ class Model:
             midprice = bb
         midprice = round(((bb + ba) / 2), 3)
 
-        if len(self.buffer) == 10:
-            print("Training...")
-            print("Midprice: " + str(midprice) + "\n")
-            self.train(features, midprice)
-        else:
-            print("Collecting data...")
-            features.insert(0, midprice)
+        if self.tick >= 11:
+            self.predict(features)
+            self.train()
+        elif self.tick == 10:
+            self.train()
+
+        if self.tick:
+            features.insert(0, (midprice - self.last_midprice) / midprice)
             self.buffer.append(features)
-            print("Midprice: " + str(midprice) + "\n")
+        else:
+            features.insert(0, 0.0)
+            self.buffer.append(features)
+
+        self.last_midprice = midprice
+        self.tick += 1
 
     def run(self, tick_size: int) -> None:
         while True:
