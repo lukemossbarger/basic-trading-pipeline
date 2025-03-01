@@ -65,8 +65,6 @@ class Model:
                     + str(round(float((midprice - self.last_midprice) / midprice), 5))
                     + "\n"
                 )
-            print("Predicted movement: " + str(prediction))
-            print("Actual movement: " + str((midprice - self.last_midprice) / midprice))
             self.train()
         elif self.tick == 10:
             self.train()
