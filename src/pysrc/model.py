@@ -1,5 +1,4 @@
 from sklearn.linear_model import Lasso
-from pysrc.data_client import DataClient
 from collections import deque
 from typing import Any, Dict, Deque
 import time
@@ -9,7 +8,7 @@ from pysrc import intern
 class Model:
     def __init__(self) -> None:
         self.buffer: Deque[list[float]] = deque(maxlen=10)
-        self.client = DataClient()
+        self.client = intern.DataClient()
         self.model = Lasso(alpha=1)
         self.tick = 0
         self.last_midprice = 0.0
