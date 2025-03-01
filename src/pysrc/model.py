@@ -78,6 +78,7 @@ class Model:
 
         self.last_midprice = midprice
         self.tick += 1
+
     def run(self, tick_size: int) -> None:
         while True:
             self.on_tick()
