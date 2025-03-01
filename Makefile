@@ -29,6 +29,7 @@ test: test_int test_py test_cpp lint_cpp lint_py
 clean:
 	@rm -rf build
 	@rm -f $(PY_SRC)/*.so
+	rm out.txt
 
 lint_cpp: build
 	find $(CPP_SRC) -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build

@@ -33,10 +33,11 @@ class Model:
         self.model.fit(X, y)
 
     def predict(self, features: list[float]) -> float:
-        prediction = round(float(self.model.predict([features])[0]), 3)
+        prediction = round(float(self.model.predict([features])[0]), 5)
         return prediction
 
     def on_tick(self) -> None:
+        print("Tick: " + str(self.tick + 1))
         data = self.client.get_data()
         features = self.compute_features(data)
 
@@ -44,7 +45,7 @@ class Model:
         ba = float("inf")
         for trade in data:
             if trade["type"] == "buy":
-                bb = max(bb, round(float(trade["price"]), 3))
+                bb = max(bb, round(float(trade["price"]), 5))
             elif trade["type"] == "sell":
                 ba = min(ba, float(trade["price"]))
         if not bb and ba == float("inf"):
@@ -56,7 +57,14 @@ class Model:
         midprice = round(((bb + ba) / 2), 3)
 
         if self.tick >= 11:
-            self.predict(features)
+            prediction = self.predict(features)
+            with open("out.txt", "a") as file:
+                file.write(
+                    str(prediction)
+                    + ", "
+                    + str(round(float((midprice - self.last_midprice) / midprice), 5))
+                    + "\n"
+                )
             self.train()
         elif self.tick == 10:
             self.train()
