@@ -8,9 +8,7 @@ with open("test.txt", "r") as file:
         predict.append(p_val)
         actual.append(a_val)
 
-predict = np.array(predict)
-actual = np.array(actual)
+predict_arr = np.array(predict)
+actual_arr = np.array(actual)
 
-correlation = np.corrcoef(predict, actual)[0, 1]
-print("Correlation: " + str(correlation))
-print("Expected: ")
+correlation = np.corrcoef(predict_arr, actual_arr)[0, 1]
