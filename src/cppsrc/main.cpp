@@ -1,3 +1,4 @@
+#include "data_client.hpp"
 #include "five_tick_sum_feature.hpp"
 #include "num_trades_feature.hpp"
 #include "percent_buy_feature.hpp"
@@ -35,6 +36,12 @@ PYBIND11_MODULE(intern, m)
     pybind11::class_<FiveTickVolumeFeature>(m, "FiveTickVolumeFeature")
       .def(pybind11::init<>())
       .def("compute_feature", &FiveTickVolumeFeature::compute_feature);
+
+    pybind11::class_<DataClient>(m, "DataClient")
+      .def(pybind11::init<>())
+      .def("_query_api", &DataClient::_query_api)
+      .def("_parse_message", &DataClient::_parse_message)
+      .def("get_data", &DataClient::get_data);
 
     m.def("add", &add, "Adds two numbers");
 }

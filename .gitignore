@@ -7,4 +7,5 @@ __pycache__
 .mypy_cache
 .vscode
 *.so
+out.txt
 
